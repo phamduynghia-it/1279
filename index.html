@@ -1,0 +1,1268 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Deargift" id="metaAppTitle">
+    <!-- Icon cho iOS (khi thêm vào Home Screen) -->
+    <link rel="apple-touch-icon" href="assets/images/icons/couple.png" id="linkAppIcon">
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/images/icons/couple.png" id="linkAppIcon180">
+    <link rel="apple-touch-icon" sizes="152x152" href="assets/images/icons/couple.png" id="linkAppIcon152">
+    <link rel="apple-touch-icon" sizes="120x120" href="assets/images/icons/couple.png" id="linkAppIcon120">
+    <!-- Favicon cho desktop browsers -->
+    <link rel="icon" type="image/png" href="assets/images/icons/couple.png" id="linkFavicon">
+    <link rel="shortcut icon" href="assets/images/icons/couple.png" id="linkShortcutIcon">
+    <!-- Web App Manifest: chỉ inject cho Android (tránh xung đột với iOS Add to Home Screen) -->
+    <meta name="theme-color" content="#1b0a1c">
+    <link rel="preload" href="assets/images/spheres/ballimagedemo.png" as="image">
+    <title id="pageTitle">Deargift</title>
+    
+    <!-- Open Graph / Facebook / Messenger Meta Tags -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Deargift - Món quà nhỏ">
+    <meta property="og:description" content="Có một món quà đặc biệt dành riêng cho bạn.">
+    <meta property="og:image" content="https://valentine-deargift.vercel.app/assets/images/icons/couple.png">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:alt" content="Deargift - Website Valentine">
+    <meta property="og:site_name" content="Deargift">
+    <meta property="og:locale" content="vi_VN">
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Deargift - Món quà nhỏ">
+    <meta name="twitter:description" content="Có một món quà đặc biệt dành riêng cho bạn.">
+    <meta name="twitter:image" content="https://valentine-deargift.vercel.app/assets/images/icons/couple.png">
+    <meta name="twitter:image:alt" content="Deargift - Website Valentine">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/backup2-scene.css">
+    <script>
+    (function(){
+        var p = new URLSearchParams(location.search);
+        var isDemoMode = p.get('useCustomConfig') === '1';
+        if (isDemoMode) {
+            window.IS_DEMO_MODE = true;
+            try {
+                var s = localStorage.getItem('APP_CONFIG_OVERRIDE');
+                if (s) {
+                    var c = JSON.parse(s);
+                    window.APP_CONFIG = c;
+                    window.HEART_MESSAGE_CONFIG = c.heart;
+                    window.USE_CUSTOM_CONFIG = true;
+                }
+            } catch (e) {}
+        }
+    })();
+    </script>
+    <script src="assets/js/config.js"></script>
+    <style>
+        /* Banner CHẾ ĐỘ DEMO - hiển thị trong không gian 3D, mờ mờ */
+        #scene3d-root .demo-mode-banner {
+            position: absolute;
+            background: transparent;
+            color: rgba(255, 107, 107, 0.15);
+            text-align: center;
+            padding: 0;
+            font-size: 120px;
+            font-weight: 900;
+            letter-spacing: 20px;
+            text-transform: uppercase;
+            z-index: -1;
+            pointer-events: none;
+            display: none;
+            animation: demoBannerFadeIn 1s ease-out;
+            text-shadow: none;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            white-space: nowrap;
+            user-select: none;
+        }
+        /* Banner 1: Giữa màn hình */
+        #scene3d-root .demo-mode-banner.banner-center {
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-15deg);
+        }
+        /* Banner 2: Góc trên bên trái */
+        #scene3d-root .demo-mode-banner.banner-top-left {
+            top: 15%;
+            left: 10%;
+            transform: translate(-50%, -50%) rotate(10deg);
+        }
+        /* Banner 3: Góc dưới bên phải */
+        #scene3d-root .demo-mode-banner.banner-bottom-right {
+            top: 85%;
+            left: 90%;
+            transform: translate(-50%, -50%) rotate(-10deg);
+        }
+        #scene3d-root .demo-mode-banner.show {
+            display: block;
+        }
+        @keyframes demoBannerFadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        @media (max-width: 768px) {
+            #scene3d-root .demo-mode-banner {
+                font-size: 80px;
+                letter-spacing: 12px;
+            }
+            /* Điều chỉnh vị trí trên mobile */
+            #scene3d-root .demo-mode-banner.banner-top-left {
+                top: 12%;
+                left: 5%;
+            }
+            #scene3d-root .demo-mode-banner.banner-bottom-right {
+                top: 88%;
+                left: 95%;
+            }
+        }
+        @media (max-width: 480px) {
+            #scene3d-root .demo-mode-banner {
+                font-size: 60px;
+                letter-spacing: 8px;
+            }
+            /* Điều chỉnh vị trí trên mobile nhỏ */
+            #scene3d-root .demo-mode-banner.banner-top-left {
+                top: 10%;
+                left: 3%;
+            }
+            #scene3d-root .demo-mode-banner.banner-bottom-right {
+                top: 90%;
+                left: 97%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading: hiện ngay từ đầu, ẩn khi tải xong -->
+    <div id="loadingOverlay" style="display:flex; flex-direction:column; position:fixed; inset:0; background:radial-gradient(1200px 600px at 15% -10%, rgba(255,105,180,0.28), transparent 60%), radial-gradient(900px 500px at 110% 10%, rgba(255,140,200,0.22), transparent 60%), linear-gradient(135deg,#1b0a1c,#2a0f2c 45%, #3a1636 100%); align-items:center; justify-content:center; padding:24px; z-index:99999;">
+        <div style="text-align:center; ">
+            <div class="loading-spinner" style="width:56px;height:56px;border:4px solid rgba(255,255,255,0.22);border-top-color:#ff8dbb;border-radius:50%;animation:spin 0.8s linear infinite; box-shadow:0 0 20px rgba(255,141,187,0.35);"></div>
+        </div>
+    </div>
+    <!-- Màn hết hạn (hiển thị khi website đã hết hạn sử dụng) -->
+    <div id="expiredOverlay" style="display:none; position:fixed; inset:0; background:radial-gradient(1200px 600px at 15% -10%, rgba(255,105,180,0.22), transparent 60%), radial-gradient(900px 500px at 110% 10%, rgba(255,140,200,0.18), transparent 60%), linear-gradient(135deg,#1b0a1c,#2a0f2c 45%, #3a1636 100%); flex-direction:column; align-items:center; justify-content:center; padding:24px; z-index:99999;">
+        <div style="text-align:center; max-width:420px; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12); border-radius:20px; padding:28px 32px; box-shadow:0 20px 60px rgba(0,0,0,0.4);">
+            <div style="font-size:64px; margin-bottom:12px;">⏰</div>
+            <h2 style="color:#fff; font-size:1.6rem; margin-bottom:10px; letter-spacing:0.2px;">Website đã hết hạn</h2>
+            <p style="color:rgba(255,255,255,0.82); font-size:0.98rem; line-height:1.6;">Website Valentine này đã hết hạn sử dụng và không thể truy cập được nữa.</p>
+        </div>
+    </div>
+    <!-- Màn vào trực tiếp (chỉ fingerprint, khi enableLockAndChat = false) -->
+    <div id="directEntryContainer" class="direct-entry-container" style="display:none">
+        <div class="direct-entry-inner">
+            <p class="direct-entry-hint">Giữ để mở quà 💝</p>
+            <div class="fingerprint-wrap direct-fingerprint" id="directFingerprintWrap">
+                <img src="assets/images/icons/giftbox.png" alt="Gift" class="fingerprint-img img-desktop">
+                <img src="assets/images/icons/fingerprint.png" alt="Love" class="fingerprint-img img-mobile">
+            </div>
+        </div>
+    </div>
+
+    <!-- Màn chat (ẩn đến khi tải xong; fade khi ấn giữ fingerprint khi enableLockAndChat = true) -->
+    <div class="container" id="chatContainer" style="display:none;">
+        <div class="phone-container">
+            <div class="phone-frame">
+            <div class="phone-mockup">
+                <!-- Dynamic Island -->
+                <div class="dynamic-island">
+                    <div class="dynamic-island-gloss"></div>
+                    <div class="dynamic-island-camera"></div>
+                </div>
+
+                <!-- Side buttons -->
+                <div class="side-btn-left"></div>
+                <div class="side-btn-right"></div>
+
+                <!-- Screen -->
+                <div class="phone-screen" id="phoneScreen">
+                    <div class="phone-screen-overlay"></div>
+
+                    <!-- Lock Screen -->
+                    <div class="lock-screen" id="lockScreen">
+                        <div class="hearts-container">
+                            <span class="heart-fly">💕</span>
+                            <span class="heart-fly">❤️</span>
+                            <span class="heart-fly">💗</span>
+                            <span class="heart-fly">💖</span>
+                            <span class="heart-fly">💕</span>
+                            <span class="heart-fly">❤️</span>
+                            <span class="heart-fly">💗</span>
+                            <span class="heart-fly">💖</span>
+                            <span class="heart-fly">💕</span>
+                            <span class="heart-fly">❤️</span>
+                        </div>
+                        <div class="lock-screen-overlay"></div>
+                        <div class="lock-screen-content">
+                            <div class="lock-time-container">
+                                <div class="lock-time" id="lockTime">09:41</div>
+                                <div class="lock-date" id="lockDate">Thứ Sáu, 14 tháng 2</div>
+                            </div>
+
+                            <div class="lock-notifications">
+                                <div class="notification-card" id="messengerNotification">
+                                    <div class="notification-icon">
+                                        <svg viewBox="0 0 24 24">
+                                            <path d="M12 2C6.36 2 2 6.13 2 11.7c0 2.91 1.19 5.44 3.14 7.17.16.13.26.35.27.57l.05 1.78c.04.57.61.94 1.13.71l1.98-.87c.17-.08.36-.1.55-.06.91.25 1.87.38 2.88.38 5.64 0 10-4.13 10-9.7C22 6.13 17.64 2 12 2zm5.89 7.73l-2.99 4.73c-.47.74-1.46.92-2.17.38l-2.38-1.78c-.18-.14-.43-.14-.61 0l-3.22 2.45c-.43.33-.99-.19-.7-.65l2.99-4.73c.47-.74 1.46-.92 2.17-.38l2.38 1.78c.18.14.43.14.61 0l3.22-2.45c.43-.33.99.19.7.65z"/>
+                                        </svg>
+                                    </div>
+                                    <div class="notification-content">
+                                        <div class="notification-title" id="notificationTitle">Công chúa xinh đẹp nhất lòng anh 🫠</div>
+                                        <div class="notification-text" id="notificationText">Tin nhắn mới</div>
+                                    </div>
+                                    <div class="notification-time">bây giờ</div>
+                                </div>
+                            </div>
+
+                            <div class="lock-bottom">
+                                <button class="lock-btn" aria-label="Đèn pin">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M9 18h6"/>
+                                        <path d="M10 22h4"/>
+                                        <path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/>
+                                    </svg>
+                                </button>
+                                <button class="lock-btn" aria-label="Camera">
+                                    <svg viewBox="0 0 24 24">
+                                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                                        <circle cx="12" cy="13" r="4"/>
+                                    </svg>
+                                </button>
+                            </div>
+
+                           
+                        </div>
+                    </div>
+
+                    <!-- Passcode Screen -->
+                    <div class="passcode-screen" id="passcodeScreen">
+                        <div class="passcode-bears" id="passcodeBears">
+                            <img src="assets/images/characters/bearwait.png" alt="" class="passcode-bear left pos-0" id="bearLeft">
+                            <img src="assets/images/characters/bearflower.png" alt="" class="passcode-bear right pos-0" id="bearRight">
+                            <img src="assets/images/icons/couple.png" alt="" class="passcode-couple-img" id="coupleImg">
+                        </div>
+                        <div class="hearts-passcode">
+                            <span class="heart-fly">💕</span><span class="heart-fly">❤️</span><span class="heart-fly">💗</span><span class="heart-fly">💖</span><span class="heart-fly">💕</span>
+                            <span class="heart-fly">❤️</span><span class="heart-fly">💗</span><span class="heart-fly">💖</span><span class="heart-fly">💕</span><span class="heart-fly">❤️</span>
+                            <span class="heart-fly">💗</span><span class="heart-fly">💖</span><span class="heart-fly">💕</span><span class="heart-fly">❤️</span><span class="heart-fly">💗</span>
+                            <span class="heart-fly">💖</span><span class="heart-fly">💕</span><span class="heart-fly">❤️</span><span class="heart-fly">💗</span><span class="heart-fly">💖</span><span class="heart-fly">💕</span>
+                        </div>
+                        <div class="passcode-title" id="passcodeTitle">Nhập mật khẩu</div>
+                        <div class="passcode-subtitle" id="passcodeSubtitle">Mở Messenger</div>
+                        <div class="passcode-dots" id="passcodeDots">
+                            <div class="passcode-dot" data-i="0"></div>
+                            <div class="passcode-dot" data-i="1"></div>
+                            <div class="passcode-dot" data-i="2"></div>
+                            <div class="passcode-dot" data-i="3"></div>
+                        </div>
+                        <div class="passcode-keypad">
+                            <button type="button" class="passcode-btn" data-num="1">1</button>
+                            <button type="button" class="passcode-btn" data-num="2">2</button>
+                            <button type="button" class="passcode-btn" data-num="3">3</button>
+                            <button type="button" class="passcode-btn" data-num="4">4</button>
+                            <button type="button" class="passcode-btn" data-num="5">5</button>
+                            <button type="button" class="passcode-btn" data-num="6">6</button>
+                            <button type="button" class="passcode-btn" data-num="7">7</button>
+                            <button type="button" class="passcode-btn" data-num="8">8</button>
+                            <button type="button" class="passcode-btn" data-num="9">9</button>
+                            <button type="button" class="passcode-btn empty"></button>
+                            <button type="button" class="passcode-btn" data-num="0">0</button>
+                            <button type="button" class="passcode-btn empty"></button>
+                        </div>
+                        <button type="button" class="passcode-cancel" id="passcodeCancel">Hủy</button>
+                    </div>
+
+                    <div class="phone-content">
+                        <!-- Chat Header -->
+                        <div class="chat-header">
+                            <div class="chat-header-inner">
+                                <button class="header-btn" id="backBtn">
+                                    <svg class="icon" viewBox="0 0 24 24">
+                                        <polyline points="15 18 9 12 15 6"/>
+                                    </svg>
+                                </button>
+                                <div class="avatar-container">
+                                    <img id="chatAvatar" src="" alt="Avatar" class="avatar">
+                                    <span class="status-dot"></span>
+                                </div>
+                                <div class="user-info">
+                                    <div class="user-name" id="chatUserName">Alex Johnson</div>
+                                    <div class="user-status">Đang hoạt động</div>
+                                </div>
+                                <div class="header-actions" id="headerActions">
+                                    <button class="header-btn" id="phoneBtn">
+                                        <svg class="icon" viewBox="0 0 24 24">
+                                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                                        </svg>
+                                    </button>
+                                    <button class="header-btn" id="videoBtn">
+                                        <svg class="icon" viewBox="0 0 24 24">
+                                            <polygon points="23 7 16 12 23 17 23 7"/>
+                                            <rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Message List -->
+                        <div class="message-list" id="messageList">
+                            <div class="messages-container" id="messagesContainer"></div>
+                        </div>
+
+                        <!-- Fingerprint/Giftbox: hiện sau tin nhắn cuối - desktop: giftbox, mobile: fingerprint -->
+                        <div class="fingerprint-wrap" id="fingerprintWrap">
+                            <img src="assets/images/icons/giftbox.png" alt="Gift" class="fingerprint-img img-desktop">
+                            <img src="assets/images/icons/fingerprint.png" alt="Love" class="fingerprint-img img-mobile">
+                        </div>
+
+                        <!-- Chat Input -->
+                        <div class="chat-input-container">
+                            <div class="chat-input-inner">
+                                <div class="input-actions" id="inputActions">
+                                    <button class="input-btn">
+                                        <svg class="icon" viewBox="0 0 24 24">
+                                            <line x1="12" y1="5" x2="12" y2="19"/>
+                                            <line x1="5" y1="12" x2="19" y2="12"/>
+                                        </svg>
+                                    </button>
+                                    <button class="input-btn">
+                                        <svg class="icon" viewBox="0 0 24 24">
+                                            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                                            <circle cx="12" cy="13" r="4"/>
+                                        </svg>
+                                    </button>
+                                    <button class="input-btn">
+                                        <svg class="icon" viewBox="0 0 24 24">
+                                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                                            <circle cx="8.5" cy="8.5" r="1.5"/>
+                                            <polyline points="21 15 16 10 5 21"/>
+                                        </svg>
+                                    </button>
+                                    <button class="input-btn">
+                                        <svg class="icon" viewBox="0 0 24 24">
+                                            <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+                                            <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                                            <line x1="12" y1="19" x2="12" y2="23"/>
+                                            <line x1="8" y1="23" x2="16" y2="23"/>
+                                        </svg>
+                                    </button>
+                                </div>
+
+                                <div class="input-wrapper">
+                                    <div class="input-pill" id="inputPill">
+                                        <input type="text" class="chat-input" id="chatInput" placeholder="Nhắn tin...">
+                                        <button class="input-btn" id="emojiBtn">
+                                            <svg class="icon" viewBox="0 0 24 24">
+                                                <circle cx="12" cy="12" r="10"/>
+                                                <path d="M8 14s1.5 2 4 2 4-2 4-2"/>
+                                                <circle cx="9" cy="9" r="1" fill="currentColor"/>
+                                                <circle cx="15" cy="9" r="1" fill="currentColor"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <button class="send-btn" id="sendBtn">
+                                    <svg class="icon" id="sendIcon" viewBox="0 0 24 24">
+                                        <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/>
+                                    </svg>
+                                    <span class="send-idle-emoji" id="sendIdleEmoji"></span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Nút quay lại web tạo (chỉ trong chế độ xem demo) -->
+    <button type="button" id="btnBackToCreate" style="display:none; position:fixed; top:16px; left:16px; z-index:9999; padding:10px 16px; background:rgba(26,10,15,0.85); color:rgba(255,255,255,0.95); border-radius:10px; font-size:0.9rem; border:1px solid rgba(255,255,255,0.2); backdrop-filter:blur(8px); box-shadow:0 2px 12px rgba(0,0,0,0.3); cursor:pointer;" title="Quay lại web tạo">← Quay lại web tạo</button>
+
+    <!-- Scene 3D (backup2) - ẩn đến khi cần; hiện khi ấn giữ fingerprint xong -->
+    <div id="scene3d-root" class="scene3d-root" style="display:none;">
+        <!-- Banner CHẾ ĐỘ DEMO - hiển thị trong không gian 3D -->
+        <div id="demoModeBanner1" class="demo-mode-banner banner-center">CHẾ ĐỘ DEMO</div>
+        <div id="demoModeBanner2" class="demo-mode-banner banner-top-left">CHẾ ĐỘ DEMO</div>
+        <div id="demoModeBanner3" class="demo-mode-banner banner-bottom-right">CHẾ ĐỘ DEMO</div>
+        
+        <!-- Nhóm trái tim + ảnh + tên (mode days): căn giữa cùng nhau trên mobile -->
+        <div class="heart-days-group" id="heart-days-group">
+            <div class="heart-days-message-slot">
+                <div id="message">Happy Valentine's Day!<br><span style="font-size: 0.6em">You are my universe.</span></div>
+            </div>
+            <div class="heart-days-images">
+                <div class="heart-side-wrap heart-side-left" id="heart-side-wrap-left">
+                    <img id="heart-side-left" class="heart-side-img" src="" alt="">
+                    <span class="heart-side-name" id="heart-side-name-left"></span>
+                </div>
+                <div class="heart-side-wrap heart-side-right" id="heart-side-wrap-right">
+                    <img id="heart-side-right" class="heart-side-img" src="" alt="">
+                    <span class="heart-side-name" id="heart-side-name-right"></span>
+                </div>
+            </div>
+        </div>
+        <button type="button" id="btn-flying-corner" aria-label="Nút khi ảnh bay">💌</button>
+        <div id="typing-container">
+            <div id="typing-text"><span class="cursor"></span></div>
+        </div>
+        <div id="cupid-letter-overlay">
+            <div class="cupid-space"></div>
+            <img id="cupid-flying-img" src="assets/images/letters/cupidletter.png" alt="Cupid" />
+            <img id="letter-envelope-img" src="assets/images/letters/letterimage.png" alt="Phong bì" />
+            <div id="letter-typing-space" class="letter-in-space">
+                <div class="letter-typing-text"></div>
+            </div>
+            <img id="cupid-in-space-boy" class="cupid-in-space" src="assets/images/characters/cupidboy.png" alt="Cupid" />
+            <img id="cupid-in-space-girl" class="cupid-in-space" src="assets/images/characters/cupidgirl.png" alt="Cupid" />
+            <div id="cupid-letter-frame">
+                <img class="cupid-frame-left" src="assets/images/characters/cupidboy.png" alt="Cupid" />
+                <img class="cupid-frame-right" src="assets/images/characters/cupidgirl.png" alt="Cupid" />
+                <div class="letter-content"><span class="letter-cursor"></span></div>
+            </div>
+        </div>
+        <div class="particles" id="sphere-particles"></div>
+    </div>
+    <!-- Gợi ý "Click vào nhé" đặt ngoài scene3d-root để luôn nổi trên canvas, dưới cùng căn giữa -->
+    <div id="sphere-click-hint" class="sphere-click-hint" aria-hidden="true">Click vào nhé</div>
+    <!-- DevTools detection disabled for local development -->
+    <!--
+    <script src="./detect-devtools.js"></script>
+    <script type='text/javascript'>
+          const keyName = 'key';
+          const keyValue = '9ac7ec230e0e4513578f309d6d3579ad';
+          DisableDevtool({ tkName: keyName, md5: keyValue, interval: '100' });
+      </script>
+    -->
+    <script>
+        // Chặn copy/ lưu tài nguyên (disabled for local dev)
+        // document.addEventListener('contextmenu', function(e) { e.preventDefault(); });
+        // document.addEventListener('dragstart', function(e) { e.preventDefault(); });
+        document.querySelectorAll('img').forEach(function(img) {
+            img.setAttribute('draggable', 'false');
+        });
+        // Cập nhật manifest Android theo config (icon + tên) — chỉ dùng cho Android, tránh xung đột iOS
+        function updateManifestForAndroid(c) {
+            var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+            if (isIOS) return; // iOS dùng apple-touch-icon + meta, không cần manifest
+            var link = document.getElementById('linkManifest');
+            if (!link) {
+                link = document.createElement('link');
+                link.rel = 'manifest';
+                link.id = 'linkManifest';
+                document.head.appendChild(link);
+            }
+            var name = (c && (c.appTitle || c.websiteTitle)) ? String(c.appTitle || c.websiteTitle).trim() : 'Deargift';
+            var iconSrc = (c && c.appIcon) ? String(c.appIcon).trim() : 'assets/images/icons/couple.png';
+            var iconUrl = iconSrc.startsWith('http') ? iconSrc : new URL(iconSrc, window.location.href).href;
+            var manifest = {
+                name: name,
+                short_name: name,
+                description: 'Món quà Valentine đặc biệt dành riêng cho bạn',
+                start_url: './',
+                display: 'standalone',
+                orientation: 'portrait',
+                background_color: '#1b0a1c',
+                theme_color: '#1b0a1c',
+                scope: './',
+                icons: [
+                    { src: iconUrl, sizes: '192x192', type: 'image/png', purpose: 'any maskable' },
+                    { src: iconUrl, sizes: '512x512', type: 'image/png', purpose: 'any maskable' }
+                ]
+            };
+            try {
+                var blob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
+                var url = URL.createObjectURL(blob);
+                link.href = url;
+            } catch (e) { console.warn('Không tạo được manifest động:', e); }
+        }
+        document.addEventListener('DOMContentLoaded', function() {
+            var cfg = window.APP_CONFIG || {};
+            var isValentine1Path = (function(){
+                var p = window.location.pathname || '';
+                if (/\/valentine1\/([^/\?#]+)/.test(p)) return true;
+                var params = new URLSearchParams(window.location.search || '');
+                if (params.get('websiteId') || params.get('id')) return true;
+                var q = (window.location.search || '').replace(/^\?/, '').split('&')[0];
+                return !!(q && /^[a-zA-Z0-9]{16,}$/.test(q));
+            })();
+
+            // Hiển thị banner CHẾ ĐỘ DEMO nếu có tham số useCustomConfig=1 (ở sau nền, mờ mờ)
+            if (window.IS_DEMO_MODE) {
+                var banner1 = document.getElementById('demoModeBanner1');
+                var banner2 = document.getElementById('demoModeBanner2');
+                var banner3 = document.getElementById('demoModeBanner3');
+                if (banner1) banner1.classList.add('show');
+                if (banner2) banner2.classList.add('show');
+                if (banner3) banner3.classList.add('show');
+                document.body.classList.add('has-demo-banner');
+                var btnBack = document.getElementById('btnBackToCreate');
+                if (btnBack) {
+                    btnBack.style.display = 'block';
+                    btnBack.onclick = function() {
+                        if (window.opener) {
+                            window.opener.focus();
+                            window.close();
+                        } else {
+                            window.location.href = 'config-editor.html';
+                        }
+                    };
+                }
+            }
+            document.querySelectorAll('img').forEach(function(img) {
+                img.setAttribute('draggable', 'false');
+            });
+            // Cập nhật thông tin website từ config — bỏ qua khi /valentine1/:id (sẽ cập nhật sau khi load API)
+            if (!isValentine1Path) {
+            if (cfg.websiteTitle && cfg.websiteTitle.trim()) {
+                var titleEl = document.getElementById('pageTitle');
+                if (titleEl) titleEl.textContent = cfg.websiteTitle;
+            }
+            if (cfg.appTitle && cfg.appTitle.trim()) {
+                var appTitleMeta = document.getElementById('metaAppTitle');
+                if (appTitleMeta) appTitleMeta.setAttribute('content', cfg.appTitle);
+            }
+            if (cfg.appIcon && cfg.appIcon.trim()) {
+                // Cập nhật tất cả các icon links
+                var iconLinks = [
+                    document.getElementById('linkAppIcon'),
+                    document.getElementById('linkAppIcon180'),
+                    document.getElementById('linkAppIcon152'),
+                    document.getElementById('linkAppIcon120'),
+                    document.getElementById('linkFavicon'),
+                    document.getElementById('linkShortcutIcon')
+                ];
+                iconLinks.forEach(function(link) {
+                    if (link) link.setAttribute('href', cfg.appIcon);
+                });
+            }
+            updateManifestForAndroid(cfg);
+            if (cfg.recipientName) {
+                var t = document.getElementById('notificationTitle');
+                if (t) t.textContent = cfg.recipientName;
+                var u = document.getElementById('chatUserName');
+                if (u) u.textContent = cfg.recipientName;
+            }
+            if (cfg.passcodeTitle) {
+                var pt = document.getElementById('passcodeTitle');
+                if (pt) pt.textContent = cfg.passcodeTitle;
+            }
+            if (cfg.passcodeSubtitle) {
+                var ps = document.getElementById('passcodeSubtitle');
+                if (ps) ps.textContent = cfg.passcodeSubtitle;
+            }
+            if (cfg.avatar) {
+                var av = document.getElementById('chatAvatar');
+                if (av) av.src = cfg.avatar;
+            }
+            var h = cfg.heart;
+            var heartGroup = document.getElementById('heart-days-group');
+            if (heartGroup) heartGroup.style.display = (h && h.mode === 'none') ? 'none' : '';
+            if (h && h.mode !== 'none') {
+                var el;
+                if (h.heartSideImageLeft && (el = document.getElementById('heart-side-left'))) el.src = h.heartSideImageLeft;
+                if (h.heartSideImageRight && (el = document.getElementById('heart-side-right'))) el.src = h.heartSideImageRight;
+                if ((el = document.getElementById('heart-side-name-left'))) el.textContent = h.loveNameLeft || '';
+                if ((el = document.getElementById('heart-side-name-right'))) el.textContent = h.loveNameRight || '';
+            }
+            var defaults = cfg.lockBackgroundDefaults || { default1: 'assets/images/spheres/ballimagedemo.png', default2: 'assets/images/chat/hinhnentinhyeu.jpg' };
+            function resolveBg(val) {
+                if (!val) return defaults.default1;
+                if (val === 'default1' || val === 'default2') return defaults[val] || defaults.default1;
+                return val;
+            }
+            var bg = resolveBg(cfg.phoneBackground || cfg.lockScreenBackground);
+            
+            // Preload background để tránh nhấp nháy
+            var preloadBg = new Image();
+            preloadBg.onload = function() {
+                var lockEl = document.getElementById('lockScreen');
+                if (lockEl && bg) lockEl.style.backgroundImage = 'url("' + bg.replace(/"/g, '%22') + '")';
+                var passEl = document.getElementById('passcodeScreen');
+                if (passEl && bg) passEl.style.backgroundImage = 'linear-gradient(rgba(80,30,55,0.7),rgba(55,20,40,0.75)),url("' + bg.replace(/"/g, '%22') + '")';
+            };
+            preloadBg.onerror = function() {
+                console.warn('Không load được ảnh nền:', bg);
+                // Vẫn set background (fallback sẽ dùng ảnh CSS mặc định)
+                var lockEl = document.getElementById('lockScreen');
+                if (lockEl) lockEl.style.backgroundImage = '';
+                var passEl = document.getElementById('passcodeScreen');
+                if (passEl) passEl.style.backgroundImage = '';
+            };
+            preloadBg.src = bg;
+            }
+        });
+        // PWA standalone (Add to Home Screen): dùng 100vh để full, fix gap dưới
+        // iPhone: navigator.standalone | Android: display-mode: standalone
+        if (navigator.standalone || window.matchMedia('(display-mode: standalone)').matches || window.matchMedia('(display-mode: fullscreen)').matches) {
+            document.documentElement.classList.add('pwa-standalone');
+        }
+        // Safari: fix backdrop-filter tối lần đầu — force repaint khi ảnh nền load xong
+        (function() {
+            const img = new Image();
+            img.src = 'assets/images/spheres/ballimagedemo.png';
+            function forceRepaint() {
+                requestAnimationFrame(function() {
+                    var el = document.getElementById('lockScreen');
+                    if (el) { el.offsetHeight; }
+                });
+            }
+            img.complete ? forceRepaint() : (img.onload = forceRepaint);
+        })();
+        // ========== Load config (LOCAL MODE - dùng config từ config.js) ==========
+        (async function() {
+            {
+                var loadingEl = document.getElementById('loadingOverlay');
+                var directEl = document.getElementById('directEntryContainer');
+                var chatEl = document.getElementById('chatContainer');
+                var sceneEl = document.getElementById('scene3d-root');
+                if (loadingEl) { loadingEl.style.display = 'flex'; loadingEl.style.flexDirection = 'column'; }
+                if (directEl) directEl.style.display = 'none';
+                if (chatEl) chatEl.style.display = 'none';
+                if (sceneEl) sceneEl.style.display = 'none';
+                {
+                    var c = window.APP_CONFIG;
+                    var t = document.getElementById('pageTitle'); if (t && c.websiteTitle) t.textContent = c.websiteTitle;
+                    var mt = document.getElementById('metaAppTitle'); if (mt && c.appTitle) mt.setAttribute('content', c.appTitle);
+                    [document.getElementById('linkAppIcon'), document.getElementById('linkAppIcon180'), document.getElementById('linkAppIcon152'), document.getElementById('linkAppIcon120'), document.getElementById('linkFavicon'), document.getElementById('linkShortcutIcon')].forEach(function(l){ if(l && c.appIcon) l.setAttribute('href', c.appIcon); });
+                    updateManifestForAndroid(c);
+                    var nt = document.getElementById('notificationTitle'); if (nt && c.recipientName) nt.textContent = c.recipientName;
+                    var cu = document.getElementById('chatUserName'); if (cu && c.recipientName) cu.textContent = c.recipientName;
+                    var pt = document.getElementById('passcodeTitle'); if (pt && c.passcodeTitle) pt.textContent = c.passcodeTitle;
+                    var ps = document.getElementById('passcodeSubtitle'); if (ps && c.passcodeSubtitle) ps.textContent = c.passcodeSubtitle;
+                    var av = document.getElementById('chatAvatar'); if (av && c.avatar) av.src = c.avatar;
+                    var h = c.heart;
+                    var heartGroup = document.getElementById('heart-days-group');
+                    if (heartGroup) heartGroup.style.display = (h && h.mode === 'none') ? 'none' : '';
+                    if (h && h.mode !== 'none') {
+                        var el; if (h.heartSideImageLeft && (el = document.getElementById('heart-side-left'))) el.src = h.heartSideImageLeft;
+                        if (h.heartSideImageRight && (el = document.getElementById('heart-side-right'))) el.src = h.heartSideImageRight;
+                        if ((el = document.getElementById('heart-side-name-left'))) el.textContent = h.loveNameLeft || '';
+                        if ((el = document.getElementById('heart-side-name-right'))) el.textContent = h.loveNameRight || '';
+                    }
+                    if (c.enableLockAndChat === true) {
+                    var defs = c.lockBackgroundDefaults || { default1: 'assets/images/backgrounds/backgroudmobile1.png', default2: 'assets/images/backgrounds/bakcgroudmobile2.png' };
+                    function resBg(v){ if(!v) return defs.default1; if(v==='default1'||v==='default2') return defs[v]||defs.default1; return v; }
+                    var bg = resBg(c.phoneBackground || c.lockScreenBackground);
+                    var isCustomUrl = bg && bg !== defs.default1 && bg !== defs.default2;
+                    var lockE = document.getElementById('lockScreen');
+                    var passE = document.getElementById('passcodeScreen');
+                    // Khi có ảnh nền từ API: không cho hiện ảnh mặc định CSS, dùng nền loading cho đến khi ảnh load xong
+                    if (isCustomUrl && lockE) {
+                        lockE.style.backgroundImage = 'none';
+                        lockE.style.background = 'linear-gradient(135deg,#1b0a1c,#2a0f2c 45%,#3a1636 100%)';
+                    }
+                    if (isCustomUrl && passE) {
+                        passE.style.backgroundImage = 'none';
+                        passE.style.background = 'linear-gradient(135deg,#1b0a1c,#2a0f2c 45%,#3a1636 100%)';
+                    }
+                    // Preload background image để tránh nhấp nháy (flash)
+                    var bgImg = new Image();
+                    bgImg.onload = function() {
+                        // Ảnh đã load xong, giờ mới set background và ẩn loading
+                        if (lockE && bg) {
+                            lockE.style.background = '';
+                            lockE.style.backgroundImage = 'url("'+bg.replace(/"/g,'%22')+'")';
+                        }
+                        if (passE && bg) {
+                            passE.style.background = '';
+                            passE.style.backgroundImage = 'linear-gradient(rgba(80,30,55,0.7),rgba(55,20,40,0.75)),url("'+bg.replace(/"/g,'%22')+'")';
+                        }
+                        if (loadingEl) loadingEl.style.display = 'none';
+                        if (c.enableLockAndChat === true) {
+                            if (chatEl) chatEl.style.display = '';
+                            if (directEl) directEl.style.display = 'none';
+                        } else {
+                            if (chatEl) chatEl.style.display = 'none';
+                            if (directEl) directEl.style.display = '';
+                        }
+                        if (sceneEl) sceneEl.style.display = '';
+                    };
+                    bgImg.onerror = function() {
+                        // Ảnh lỗi: dùng ảnh mặc định làm fallback
+                        console.warn('Không load được ảnh nền:', bg);
+                        var fallback = defs.default1;
+                        if (lockE && fallback) {
+                            lockE.style.background = '';
+                            lockE.style.backgroundImage = 'url("'+fallback.replace(/"/g,'%22')+'")';
+                        }
+                        if (passE && fallback) {
+                            passE.style.background = '';
+                            passE.style.backgroundImage = 'linear-gradient(rgba(80,30,55,0.7),rgba(55,20,40,0.75)),url("'+fallback.replace(/"/g,'%22')+'")';
+                        }
+                        if (loadingEl) loadingEl.style.display = 'none';
+                        if (c.enableLockAndChat === true) {
+                            if (chatEl) chatEl.style.display = '';
+                            if (directEl) directEl.style.display = 'none';
+                        } else {
+                            if (chatEl) chatEl.style.display = 'none';
+                            if (directEl) directEl.style.display = '';
+                        }
+                        if (sceneEl) sceneEl.style.display = '';
+                    };
+                    bgImg.src = bg;
+                    } else {
+                        if (loadingEl) loadingEl.style.display = 'none';
+                        if (chatEl) chatEl.style.display = 'none';
+                        if (directEl) directEl.style.display = '';
+                        if (sceneEl) sceneEl.style.display = '';
+                    }
+                }
+            }
+        // ========== DATA từ APP_CONFIG ==========
+        const cfg = window.APP_CONFIG || {};
+        const isExpired = cfg && cfg.expiresAt && new Date() > new Date(cfg.expiresAt);
+        if (isExpired) {
+            document.getElementById('expiredOverlay').style.display = 'flex';
+            document.getElementById('directEntryContainer').style.display = 'none';
+            document.getElementById('chatContainer').style.display = 'none';
+        } else {
+        const enableLockAndChat = cfg.enableLockAndChat === true;
+        const enablePasscode = cfg.enablePasscode !== false;
+        const enableLetter = cfg.enableLetter === true;
+
+        const TEMPLATES = cfg.templates;
+        const SELECTED_TEMPLATE_KEY = cfg.selectedTemplateKey;
+        let currentTheme = { ...(TEMPLATES.find(t => t.key === SELECTED_TEMPLATE_KEY) || TEMPLATES[0]).theme };
+
+        const allMessages = cfg.messages.slice();
+        allMessages.forEach((msg, index) => {
+            if (index > 0) {
+                const charCount = msg.text.length;
+                msg.delay = Math.min(Math.max(charCount * cfg.messageDelayMsPerChar, cfg.messageDelayMinMs), cfg.messageDelayMaxMs);
+            }
+        });
+
+        let messages = [allMessages[0]];
+        let isAutoPlaying = false;
+
+        // Tạo Audio object cho âm thanh thông báo
+        const messageSound = new Audio('music/messenger.mp3');
+        messageSound.preload = 'auto';
+
+        // Nhạc nền khi giữ nút hộp quà (lấy từ config nếu có, không thì dùng mặc định)
+        var bgMusicSrc = 'assets/music/bgmusic.mp3'; // Mặc định
+        if (cfg && typeof cfg.bgMusic === 'string' && cfg.bgMusic.length > 10) {
+            // Chỉ dùng config nếu bgMusic có giá trị hợp lệ (URL hoặc data URL)
+            bgMusicSrc = cfg.bgMusic;
+        }
+        const bgMusic = new Audio(bgMusicSrc);
+        bgMusic.preload = 'auto';
+        bgMusic.loop = true;
+        bgMusic.onerror = function() {
+            console.log('Lỗi tải nhạc nền, thử dùng file mặc định...');
+            if (bgMusic.src.indexOf('bgmucsic.mp3') === -1) {
+                bgMusic.src = 'assets/music/bgmusic.mp3';
+                bgMusic.load();
+            }
+        };
+
+        // ========== DOM Elements ==========
+        const phoneScreen = document.getElementById('phoneScreen');
+        const messagesContainer = document.getElementById('messagesContainer');
+        const messageList = document.getElementById('messageList');
+        const chatInput = document.getElementById('chatInput');
+        const sendBtn = document.getElementById('sendBtn');
+        const sendIcon = document.getElementById('sendIcon');
+        const sendIdleEmoji = document.getElementById('sendIdleEmoji');
+        const backBtn = document.getElementById('backBtn');
+        const headerActions = document.getElementById('headerActions');
+        const inputActions = document.getElementById('inputActions');
+        const inputPill = document.getElementById('inputPill');
+        const notificationText = document.getElementById('notificationText');
+        const chatContainerEl = document.getElementById('chatContainer');
+        const directEntryContainer = document.getElementById('directEntryContainer');
+
+        // Ẩn loading, hiển thị màn tương ứng
+        var loadingOverlayEl = document.getElementById('loadingOverlay');
+        if (loadingOverlayEl) loadingOverlayEl.style.display = 'none';
+        if (enableLockAndChat) {
+            chatContainerEl.style.display = '';
+            if (directEntryContainer) directEntryContainer.style.display = 'none';
+        } else {
+            chatContainerEl.style.display = 'none';
+            if (directEntryContainer) {
+                directEntryContainer.style.display = 'flex';
+                directEntryContainer.style.flexDirection = 'column';
+            }
+        }
+
+        // ========== Hold -> 3D (dùng chung cho chat fingerprint & direct entry) ==========
+        function setupHoldTo3D(wrap, containerToHide) {
+            if (!wrap) return;
+            wrap.classList.remove('held');
+            wrap.classList.add('visible');
+            var holdTimer = null, holdStartTime = 0;
+            // Force 1.5s (1500ms) thay vì dùng từ config
+            var HOLD_MS = 1500;
+            var scriptsLoaded = false, transitioned = false;
+            var scene3d = document.getElementById('scene3d-root');
+
+            function init3DScene() {
+                if (!window.SCENE3D_CONTAINER) {
+                    window.SCENE3D_CONTAINER = scene3d;
+                    var s = document.createElement('script');
+                    s.src = 'assets/js/backup2-scene.js';
+                    s.onload = function() {
+                        if (typeof window.initBackup2Scene === 'function') window.initBackup2Scene();
+                    };
+                    document.body.appendChild(s);
+                }
+            }
+
+            function doTransition() {
+                if (transitioned) return;
+                transitioned = true;
+                var elapsed = Date.now() - holdStartTime;
+                console.log('✅ Đủ thời gian giữ! Thời gian đã giữ: ' + elapsed + 'ms (yêu cầu: ' + HOLD_MS + 'ms)');
+                // Đảm bảo transition hoàn thành nhanh khi đã đủ thời gian giữ
+                containerToHide.style.transition = 'opacity 0.3s ease-out';
+                containerToHide.style.opacity = '0';
+                containerToHide.style.pointerEvents = 'none';
+                setTimeout(function() { containerToHide.style.display = 'none'; }, 400);
+            }
+
+            function onDown() {
+                holdStartTime = Date.now();
+                console.log('🔵 Bắt đầu giữ nút. Thời gian yêu cầu: ' + HOLD_MS + 'ms (1.5s)');
+                isAutoPlaying = false;
+                messageSound.pause();
+                messageSound.currentTime = 0;
+                hideTypingIndicator();
+                bgMusic.currentTime = 0;
+                bgMusic.play().catch(function(err) { console.log('Không thể phát nhạc nền:', err); });
+                if (scene3d) {
+                    scene3d.classList.add('visible');
+                    scene3d.style.display = 'block';
+                }
+                containerToHide.style.transition = 'opacity 1.5s ease-out';
+                containerToHide.style.opacity = '0';
+                if (!window.THREE) {
+                    var s1 = document.createElement('script');
+                    s1.src = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
+                    s1.onload = function() {
+                        var s2 = document.createElement('script');
+                        s2.src = 'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js';
+                        s2.onload = function() { scriptsLoaded = true; init3DScene(); };
+                        document.body.appendChild(s2);
+                    };
+                    document.body.appendChild(s1);
+                } else { scriptsLoaded = true; init3DScene(); }
+                holdTimer = setInterval(function() {
+                    var elapsed = Date.now() - holdStartTime;
+                    if (elapsed >= 500) wrap.classList.add('held');
+                    // Log mỗi 500ms để theo dõi
+                    if (elapsed % 500 < 100) {
+                        console.log('⏱️ Đang giữ: ' + elapsed + 'ms / ' + HOLD_MS + 'ms (' + Math.round(elapsed / HOLD_MS * 100) + '%)');
+                    }
+                    if (elapsed >= HOLD_MS && scriptsLoaded) {
+                        clearInterval(holdTimer); holdTimer = null;
+                        doTransition();
+                    }
+                }, 100);
+            }
+
+            function onUp() {
+                if (holdTimer) { 
+                    clearInterval(holdTimer); 
+                    holdTimer = null; 
+                }
+                // Chỉ reset nếu chưa transition và chưa đủ thời gian giữ (1.5s)
+                var elapsed = Date.now() - holdStartTime;
+                console.log('🔴 Bỏ tay ra. Thời gian đã giữ: ' + elapsed + 'ms / ' + HOLD_MS + 'ms (' + Math.round(elapsed / HOLD_MS * 100) + '%)');
+                if (!transitioned && elapsed < HOLD_MS) {
+                    console.log('❌ Chưa đủ thời gian! Quay lại màn hình cũ.');
+                    containerToHide.style.transition = 'opacity 0.3s ease-out';
+                    containerToHide.style.opacity = '1';
+                    wrap.classList.remove('held');
+                    if (scene3d) {
+                        scene3d.classList.remove('visible');
+                        scene3d.style.display = 'none';
+                    }
+                    bgMusic.pause();
+                    bgMusic.currentTime = 0;
+                } else if (transitioned) {
+                    console.log('✅ Đã transition, không reset.');
+                } else {
+                    console.log('✅ Đã đủ thời gian nhưng chưa transition.');
+                }
+            }
+
+            wrap.onpointerdown = onDown;
+            wrap.onpointerup = onUp;
+            wrap.onpointercancel = onUp;
+        }
+
+        function setupDirectEntryHold() {
+            var wrap = document.getElementById('directFingerprintWrap');
+            var container = document.getElementById('directEntryContainer');
+            if (wrap && container) setupHoldTo3D(wrap, container);
+        }
+
+        // ========== Functions ==========
+        function applyTheme(theme) {
+            currentTheme = { ...theme };
+
+            const screen = phoneScreen;
+            const phoneContent = document.querySelector('.phone-content');
+            const hasBg = !!theme.bgImage;
+            if (hasBg) {
+                const bg = theme.bgImage.startsWith('linear-gradient') ? theme.bgImage : `url(${theme.bgImage})`;
+                screen.style.backgroundImage = bg;
+                screen.classList.add('has-bg');
+                phoneContent.classList.add('has-bg-image');
+                phoneContent.style.setProperty('--header-bg', 'transparent');
+                phoneContent.style.setProperty('--input-container-bg', 'transparent');
+            } else {
+                screen.style.backgroundImage = '';
+                screen.classList.remove('has-bg');
+                phoneContent.classList.remove('has-bg-image');
+                phoneContent.style.setProperty('--header-bg', theme.headerBg || 'rgba(23, 23, 23, 0.95)');
+                phoneContent.style.setProperty('--input-container-bg', theme.inputContainerBg || 'linear-gradient(to top, #0a0a0a, rgba(10, 10, 10, 0.95))');
+            }
+            phoneContent.style.setProperty('--icon-color', theme.iconColor);
+
+            renderMessages();
+            updateSendButton();
+        }
+
+        function renderMessages() {
+            messagesContainer.innerHTML = '';
+            messages.forEach(msg => {
+                const row = document.createElement('div');
+                row.className = `message-row ${msg.side}`;
+
+                const bubble = document.createElement('div');
+                bubble.className = `message-bubble ${msg.side}`;
+                if (msg.iconOnly) bubble.classList.add('icon-only');
+
+                if (msg.iconOnly) {
+                    bubble.style.backgroundColor = 'transparent';
+                    bubble.style.boxShadow = 'none';
+                } else if (msg.side === 'right') {
+                    bubble.style.backgroundColor = currentTheme.bubbleRightBg;
+                    bubble.style.color = currentTheme.bubbleRightText;
+                } else {
+                    bubble.style.backgroundColor = currentTheme.bubbleLeftBg;
+                    bubble.style.color = currentTheme.bubbleLeftText;
+                }
+
+                bubble.textContent = msg.text;
+                row.appendChild(bubble);
+                messagesContainer.appendChild(row);
+            });
+
+            messageList.scrollTop = messageList.scrollHeight;
+        }
+
+        function showTypingIndicator() {
+            const row = document.createElement('div');
+            row.className = 'message-row left';
+            row.id = 'typingIndicator';
+
+            const bubble = document.createElement('div');
+            bubble.className = 'message-bubble left typing-indicator';
+            bubble.style.backgroundColor = currentTheme.bubbleLeftBg;
+
+            for (let i = 0; i < 3; i++) {
+                const dot = document.createElement('div');
+                dot.className = 'typing-dot';
+                bubble.appendChild(dot);
+            }
+
+            row.appendChild(bubble);
+            messagesContainer.appendChild(row);
+            messageList.scrollTop = messageList.scrollHeight;
+        }
+
+        function hideTypingIndicator() {
+            const indicator = document.getElementById('typingIndicator');
+            if (indicator) {
+                indicator.remove();
+            }
+        }
+
+        function showFingerprintWithShake() {
+            const wrap = document.getElementById('fingerprintWrap');
+            if (wrap && chatContainerEl) setupHoldTo3D(wrap, chatContainerEl);
+        }
+
+        function playNextMessage(index) {
+            if (index >= allMessages.length || isAutoPlaying === false) return;
+
+            const msg = allMessages[index];
+            
+            // Hiện typing indicator
+            showTypingIndicator();
+
+            // Sau delay, ẩn typing và hiện tin nhắn
+            setTimeout(() => {
+                if (!isAutoPlaying) {
+                    hideTypingIndicator();
+                    return;
+                }
+
+                messageSound.currentTime = 0;
+                messageSound.play().catch(err => {
+                    console.log('Không thể phát âm thanh:', err);
+                });
+
+                hideTypingIndicator();
+                messages.push(msg);
+                renderMessages();
+
+                // Hiện fingerprint sau tin nhắn cuối cùng
+                if (index === allMessages.length - 1) {
+                    showFingerprintWithShake();
+                }
+
+                // Tiếp tục tin tiếp theo
+                playNextMessage(index + 1);
+            }, msg.delay);
+        }
+
+        function startAutoMessages() {
+            if (isAutoPlaying) return;
+            isAutoPlaying = true;
+            // Bắt đầu từ tin thứ 2 (index 1) vì tin đầu đã hiện
+            playNextMessage(1);
+        }
+
+        function updateSendButton() {
+            const hasText = chatInput.value.trim().length > 0;
+            const defaultIdlePath = '<path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/>';
+            const idleIcon = currentTheme.sendIdleIcon;
+            const useEmoji = idleIcon && !idleIcon.includes('<');
+
+            if (hasText) {
+                sendBtn.classList.remove('emoji-mode');
+                sendIcon.style.display = '';
+                sendIcon.innerHTML = '<line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>';
+                sendBtn.style.color = currentTheme.sendActiveColor;
+            } else if (useEmoji) {
+                sendBtn.classList.add('emoji-mode');
+                sendIdleEmoji.textContent = idleIcon;
+                sendBtn.style.color = currentTheme.iconColor;
+            } else {
+                sendBtn.classList.remove('emoji-mode');
+                sendIcon.style.display = '';
+                sendIcon.innerHTML = idleIcon || defaultIdlePath;
+                sendBtn.style.color = currentTheme.iconColor;
+            }
+        }
+
+        function sendMessage() {
+            const text = chatInput.value.trim();
+            
+            if (!text) {
+                // Gửi icon (like) - KHÔNG dừng auto-play
+                messages.push({ id: Date.now(), side: 'right', text: currentTheme.likeIcon || '👍', iconOnly: true });
+            } else {
+                // Gửi tin nhắn có text - dừng auto-play
+                isAutoPlaying = false;
+                hideTypingIndicator();
+                messages.push({ id: Date.now(), side: 'right', text });
+                chatInput.value = '';
+            }
+            renderMessages();
+            updateSendButton();
+        }
+
+        // ========== Event Listeners ==========
+        chatInput.oninput = updateSendButton;
+
+        chatInput.onkeydown = (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        };
+
+        chatInput.addEventListener('focus', () => {
+            messageList.scrollTop = messageList.scrollHeight;
+            setTimeout(() => { messageList.scrollTop = messageList.scrollHeight; }, 100);
+        });
+
+        sendBtn.onclick = sendMessage;
+
+        // ========== Keyboard resize handler (mobile only) ==========
+        // dvh không đổi khi keyboard open → layout không shift.
+        // Nhưng trên một số Android browser, layout có thể shrink.
+        // Handler này chỉ scroll message list down, không touch height.
+        if (window.visualViewport) {
+            window.visualViewport.addEventListener('resize', () => {
+                // Chỉ scroll down khi input đang focus (keyboard đang mở)
+                if (document.activeElement === chatInput) {
+                    messageList.scrollTop = messageList.scrollHeight;
+                }
+            });
+        }
+
+        // ========== Lock Screen (chỉ khi enableLockAndChat) ==========
+        if (enableLockAndChat) {
+        const lockScreen = document.getElementById('lockScreen');
+        const lockTime = document.getElementById('lockTime');
+        const lockDate = document.getElementById('lockDate');
+        const messengerNotification = document.getElementById('messengerNotification');
+
+        function updateLockTime() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            lockTime.textContent = `${hours}:${minutes}`;
+
+            const days = ['Chủ Nhật', 'Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy'];
+            const day = days[now.getDay()];
+            const date = now.getDate();
+            const month = now.getMonth() + 1;
+            lockDate.textContent = `${day}, ${date} tháng ${month}`;
+        }
+
+        updateLockTime();
+        setInterval(updateLockTime, 1000);
+
+        messengerNotification.onclick = () => {
+            lockScreen.classList.add('hide');
+            if (!enablePasscode) {
+                document.querySelector('.phone-content').classList.add('visible');
+                startAutoMessages();
+            } else {
+                document.getElementById('passcodeScreen').classList.add('visible');
+                passcodeInput = '';
+                updatePasscodeDots();
+                updateBearPosition();
+            }
+        };
+
+        backBtn.onclick = () => {
+            isAutoPlaying = false;
+            hideTypingIndicator();
+            messageSound.pause();
+            messageSound.currentTime = 0;
+            bgMusic.pause();
+            bgMusic.currentTime = 0;
+            
+            document.getElementById('passcodeScreen').classList.remove('visible');
+            document.querySelector('.phone-content').classList.remove('visible');
+            lockScreen.classList.remove('hide');
+            
+            // Reset messages về tin đầu tiên
+            messages = [allMessages[0]];
+            renderMessages();
+            const fpWrap = document.getElementById('fingerprintWrap');
+            if (fpWrap) {
+                fpWrap.classList.remove('visible', 'held');
+                fpWrap.onpointerdown = null;
+                fpWrap.onpointerup = null;
+                fpWrap.onpointercancel = null;
+            }
+        };
+
+        // ========== Passcode Screen ==========
+        const PASSCODE = window.APP_CONFIG.passcode;
+        let passcodeInput = '';
+        const passcodeScreen = document.getElementById('passcodeScreen');
+
+        // Chặn thu phóng (pinch zoom) khi đang ở màn hình Passcode
+        function preventPasscodeZoom(e) {
+            if (e.touches.length > 1) e.preventDefault();
+        }
+        passcodeScreen.addEventListener('touchmove', preventPasscodeZoom, { passive: false });
+        passcodeScreen.addEventListener('gesturestart', function(e) { e.preventDefault(); }, { passive: false });
+        passcodeScreen.addEventListener('gesturechange', function(e) { e.preventDefault(); }, { passive: false });
+        passcodeScreen.addEventListener('gestureend', function(e) { e.preventDefault(); }, { passive: false });
+        const passcodeDots = document.getElementById('passcodeDots');
+        const passcodeCancel = document.getElementById('passcodeCancel');
+        const bearLeft = document.getElementById('bearLeft');
+        const bearRight = document.getElementById('bearRight');
+
+        function updatePasscodeDots() {
+            const dots = passcodeDots.querySelectorAll('.passcode-dot');
+            dots.forEach((dot, i) => {
+                dot.classList.remove('filled', 'error');
+                if (i < passcodeInput.length) dot.classList.add('filled');
+            });
+        }
+
+        function updateBearPosition() {
+            const pos = passcodeInput.length;
+            bearLeft.className = `passcode-bear left pos-${pos}`;
+            bearRight.className = `passcode-bear right pos-${pos}`;
+        }
+
+        function showPasscodeError() {
+            const dots = passcodeDots.querySelectorAll('.passcode-dot');
+            dots.forEach(d => d.classList.add('error'));
+            bearLeft.className = 'passcode-bear left pos-0';
+            bearRight.className = 'passcode-bear right pos-0';
+            setTimeout(() => {
+                passcodeInput = '';
+                dots.forEach(d => d.classList.remove('filled', 'error'));
+            }, 400);
+        }
+
+        function openChat() {
+            document.getElementById('passcodeBears').classList.add('show-couple');
+
+            setTimeout(() => {
+                passcodeScreen.classList.add('hiding');
+                document.querySelector('.phone-content').classList.add('visible');
+
+                setTimeout(() => {
+                    passcodeScreen.classList.remove('visible', 'hiding');
+                    document.getElementById('passcodeBears').classList.remove('show-couple');
+                    
+                    // Bắt đầu auto-play tin nhắn sau khi vào chat
+                    startAutoMessages();
+                }, 500);
+            }, 2000);
+        }
+
+        document.querySelectorAll('.passcode-btn[data-num]').forEach(btn => {
+            btn.onclick = () => {
+                if (passcodeInput.length >= 4) return;
+                passcodeInput += btn.dataset.num;
+                updatePasscodeDots();
+                updateBearPosition();
+
+                if (passcodeInput.length === 4) {
+                    if (passcodeInput === PASSCODE) {
+                        openChat();
+                    } else {
+                        showPasscodeError();
+                    }
+                }
+            };
+        });
+
+        passcodeCancel.onclick = () => {
+            passcodeScreen.classList.remove('visible', 'hiding');
+            lockScreen.classList.remove('hide');
+        };
+
+        } // end enableLockAndChat
+
+        // ========== Init ==========
+        if (enableLockAndChat) {
+            if (allMessages.length > 0) notificationText.textContent = allMessages[0].text;
+            applyTheme(currentTheme);
+        } else {
+            setupDirectEntryHold();
+        }
+        } // end !isExpired
+        })(); // end async init
+    </script>
+</body>
+</html>

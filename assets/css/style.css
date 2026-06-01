@@ -1,0 +1,1185 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+}
+img {
+    -webkit-user-drag: none;
+    -khtml-user-drag: none;
+    -moz-user-drag: none;
+    -o-user-drag: none;
+    user-drag: none;
+    pointer-events: auto;
+}
+
+/*
+ * ─── VIEWPORT HEIGHT FIX ────────────────────────────────────
+ * Safari 100vh bao gồm address bar → content bị cắt.
+ *
+ * Giải pháp: dùng các unit mới:
+ *   dvh – dynamic viewport height: đổi theo address bar show/hide
+ *   svh – small viewport height: height khi address bar ĐANG hiện (nhỏ nhất, safe)
+ *   lvh – large viewport height: height khi address bar ẩn (lớn nhất)
+ *
+ * Support: Safari 15.4+ (iOS 15.4+), Chrome 108+, Firefox 101+
+ * Fallback 100vh cho browser cũ.
+ *
+ * Tại đây:
+ *   - body dùng dvh → cố gắng fill vùng thực sự nhìn thấy
+ *   - fallback svh → nếu dvh không support, dùng vùng nhỏ nhất (safe, không bị cắt)
+ *   - fallback 100vh → browser rất cũ
+ * ─────────────────────────────────────────────────────────────
+ */
+html, body {
+    /* Stack fallback: browser đọc từ trên xuống, giữ lại line cuối cùng nó hiểu */
+    height: 100vh;       /* fallback cũ nhất */
+    height: 100svh;      /* fallback: safe = không bị address bar cắt */
+    height: 100dvh;      /* ideal: dynamic, đổi khi address bar animate */
+    overflow: hidden;
+}
+
+body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background:  #a5a5a5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Layout */
+.container {
+    width: 100%;
+    max-width: 72rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Phone Mockup */
+.phone-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.phone-mockup {
+    width: 380px;
+    height: 780px;
+    border-radius: 48px;
+    background: #171717;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    border: 1px solid #262626;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Dynamic Island */
+.dynamic-island {
+    position: absolute;
+    top: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 130px;
+    height: 30px;
+    background: black;
+    border-radius: 9999px;
+    z-index: 60;
+}
+
+.dynamic-island-gloss {
+    position: absolute;
+    inset: 0;
+    border-radius: 9999px;
+    overflow: hidden;
+}
+
+.dynamic-island-gloss::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 50%;
+    background: linear-gradient(to bottom, rgba(255,255,255,0.1), transparent);
+}
+
+.dynamic-island-camera {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 24px;
+    height: 24px;
+    border-radius: 9999px;
+    background: radial-gradient(closest-side, rgba(255,255,255,0.12), rgba(0,0,0,0.6));
+    opacity: 0.6;
+}
+
+/* Side buttons */
+.side-btn-left {
+    position: absolute;
+    left: -3px;
+    top: 96px;
+    width: 4px;
+    height: 96px;
+    background: #262626;
+    border-radius: 0 4px 4px 0;
+}
+
+.side-btn-right {
+    position: absolute;
+    right: -3px;
+    top: 128px;
+    width: 4px;
+    height: 64px;
+    background: #262626;
+    border-radius: 4px 0 0 4px;
+}
+
+/* Screen */
+.phone-screen {
+    position: absolute;
+    inset: 0;
+    background: #18191A;
+    background-size: cover;
+    background-position: center;
+}
+/* Desktop: viền điện thoại bên ngoài (frame mockup) */
+.phone-frame {
+    display: contents;
+}
+@media (min-width: 769px) {
+    .phone-frame {
+        display: block;
+        padding: 10px;
+        background: linear-gradient(145deg, #2a2a2a 0%, #1a1a1a 50%, #0d0d0d 100%);
+        border-radius: 64px;
+        box-shadow: 
+            0 0 0 4px #333,
+            0 0 0 6px #1a1a1a,
+            0 30px 60px -15px rgba(0,0,0,0.5),
+            inset 0 1px 0 rgba(255,255,255,0.06);
+    }
+}
+
+.phone-screen-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.3);
+    display: none;
+}
+
+.phone-screen.has-bg .phone-screen-overlay {
+    display: block;
+}
+
+.phone-content {
+    position: relative;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* Chat Header */
+.chat-header {
+    flex-shrink: 0;
+    padding: 32px 16px 8px;
+    background: var(--header-bg, rgba(23, 23, 23, 0.95));
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(38, 38, 38, 0.7);
+    z-index: 10;
+}
+.phone-content.has-bg-image .chat-header {
+    background: rgba(255, 255, 255, 0.08);
+    border-bottom-color: rgba(255, 255, 255, 0.2);
+}
+
+.chat-header-inner {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.header-btn {
+    padding: 4px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.header-btn:hover {
+    opacity: 0.7;
+}
+
+.avatar-container {
+    position: relative;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 9999px;
+    object-fit: cover;
+    border: 1px solid #404040;
+}
+
+.status-dot {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 14px;
+    height: 14px;
+    border-radius: 9999px;
+    background: #10b981;
+    border: 2px solid #171717;
+}
+
+.user-info {
+    flex: 1;
+    line-height: 1.2;
+}
+
+.user-name {
+    color: white;
+    font-weight: 600;
+}
+
+.user-status {
+    font-size: 12px;
+    color: #34d399;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Message List */
+.message-list {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 8px 8px 16px;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+.message-list::-webkit-scrollbar {
+    display: none;
+}
+
+.messages-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* Message Bubble */
+.message-row {
+    display: flex;
+    padding: 0 12px;
+}
+
+.message-row.left {
+    justify-content: flex-start;
+}
+
+.message-row.right {
+    justify-content: flex-end;
+}
+
+.message-bubble {
+    max-width: 78%;
+    padding: 8px 12px;
+    font-size: 15px;
+    line-height: 1.4;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.message-bubble.left {
+    border-radius: 16px;
+    border-bottom-left-radius: 6px;
+}
+
+.message-bubble.right {
+    border-radius: 16px;
+    border-bottom-right-radius: 6px;
+}
+
+.message-bubble.icon-only {
+    background: transparent !important;
+    box-shadow: none !important;
+    padding: 4px;
+    font-size: 40px;
+}
+
+/* Typing Indicator */
+.typing-indicator {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 12px 16px;
+}
+
+.typing-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(62, 62, 62, 0.6);
+    animation: typingBounce 1.4s infinite ease-in-out;
+}
+
+.typing-dot:nth-child(1) {
+    animation-delay: 0s;
+}
+
+.typing-dot:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.typing-dot:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes typingBounce {
+    0%, 60%, 100% {
+        transform: translateY(0);
+        opacity: 0.6;
+    }
+    30% {
+        transform: translateY(-8px);
+        opacity: 1;
+    }
+}
+
+/* Fingerprint: hiện sau tin nhắn cuối, phía trên thanh nhắn tin */
+.fingerprint-wrap {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    padding-bottom: 85px;
+    pointer-events: none;
+    opacity: 0;
+    z-index: 10;
+}
+.fingerprint-wrap.visible {
+    pointer-events: auto;
+    animation: fingerprint-fadein 2s ease-out forwards;
+}
+.fingerprint-wrap.visible .fingerprint-img {
+    animation: fingerprint-shake 0.5s ease-in-out infinite;
+    animation-delay: 2s;
+    animation-fill-mode: both;
+}
+.fingerprint-wrap.held .fingerprint-img {
+    animation: none;
+}
+@keyframes fingerprint-fadein {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+@keyframes fingerprint-shake {
+    0%, 100% { transform: rotate(-3deg); }
+    50% { transform: rotate(3deg); }
+}
+.fingerprint-img {
+    width: 94px;
+    height: auto;
+    object-fit: contain;
+}
+.fingerprint-img.img-desktop {
+    display: none;
+}
+.fingerprint-img.img-mobile {
+    display: block;
+}
+@media (min-width: 769px) {
+    .fingerprint-img.img-desktop {
+        display: block;
+    }
+    .fingerprint-img.img-mobile {
+        display: none;
+    }
+}
+
+/* Chat Input */
+.chat-input-container {
+    flex-shrink: 0;
+    padding: 8px 12px 16px;
+    background: var(--input-container-bg, linear-gradient(to top, #0a0a0a, rgba(10, 10, 10, 0.95)));
+}
+.phone-content.has-bg-image .chat-input-container {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.chat-input-inner {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.input-actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.input-btn {
+    padding: 6px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.input-btn:hover {
+    opacity: 0.7;
+}
+
+.input-wrapper {
+    flex: 1;
+    min-width: 0;
+}
+
+.input-pill {
+    display: flex;
+    align-items: center;
+    border-radius: 9999px;
+    padding: 0 8px;
+    background: transparent;
+    border: 1px solid rgba(64, 64, 64, 0.6);
+}
+
+.chat-input {
+    flex: 1;
+    min-width: 0;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: #f5f5f5;
+    font-size: 15px;
+    padding: 8px;
+}
+
+.chat-input::placeholder {
+    color: rgba(229, 229, 229, 0.6);
+}
+
+.send-btn {
+    padding: 6px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+/* SVG Icons & theme vars */
+.phone-content {
+    --icon-color: #FFFFFF;
+    --header-bg: rgba(23, 23, 23, 0.95);
+    --input-container-bg: linear-gradient(to top, #0a0a0a, rgba(10, 10, 10, 0.95));
+}
+
+.header-btn,
+.input-btn {
+    color: var(--icon-color);
+}
+
+.icon {
+    width: 22px;
+    height: 22px;
+    stroke-width: 2.5;
+    fill: none;
+    stroke: currentColor;
+}
+
+.send-idle-emoji {
+    display: none;
+    font-size: 24px;
+    line-height: 1;
+}
+
+.send-btn.emoji-mode .icon {
+    display: none;
+}
+
+.send-btn.emoji-mode .send-idle-emoji {
+    display: inline;
+}
+
+.icon-sm {
+    width: 16px;
+    height: 16px;
+}
+
+.icon-check {
+    width: 14px;
+    height: 14px;
+}
+
+/* Hidden */
+.hidden {
+    display: none !important;
+}
+
+/* ========== LOCK SCREEN ========== */
+.lock-screen {
+    position: absolute;
+    inset: 0;
+    background: url('../images/backgrounds/bakcgroudmobile2.png') center/cover;
+    z-index: 50;
+    display: flex;
+    flex-direction: column;
+    transition: opacity 0.4s, transform 0.4s;
+    overflow: hidden;
+}
+
+/* Hearts */
+.hearts-container {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.heart-fly {
+    position: absolute;
+    bottom: -20px;
+    font-size: 16px;
+    opacity: 0.6;
+    animation: heartFly 8s linear infinite;
+}
+
+.heart-fly:nth-child(1) { left: 10%; animation-delay: 0s; animation-duration: 7s; font-size: 14px; }
+.heart-fly:nth-child(2) { left: 25%; animation-delay: 1.5s; animation-duration: 9s; font-size: 20px; }
+.heart-fly:nth-child(3) { left: 45%; animation-delay: 0.5s; animation-duration: 8s; font-size: 12px; }
+.heart-fly:nth-child(4) { left: 65%; animation-delay: 2s; animation-duration: 10s; font-size: 18px; }
+.heart-fly:nth-child(5) { left: 80%; animation-delay: 0.8s; animation-duration: 7s; font-size: 15px; }
+.heart-fly:nth-child(6) { left: 35%; animation-delay: 3s; animation-duration: 9s; font-size: 11px; }
+.heart-fly:nth-child(7) { left: 55%; animation-delay: 2.5s; animation-duration: 8s; font-size: 16px; }
+.heart-fly:nth-child(8) { left: 90%; animation-delay: 1s; animation-duration: 11s; font-size: 13px; }
+.heart-fly:nth-child(9) { left: 15%; animation-delay: 4s; animation-duration: 8s; font-size: 17px; }
+.heart-fly:nth-child(10) { left: 70%; animation-delay: 3.5s; animation-duration: 9s; font-size: 14px; }
+
+@keyframes heartFly {
+    0% {
+        transform: translateY(0) translateX(0) scale(1);
+        opacity: 0.6;
+    }
+    100% {
+        transform: translateY(-100vh) translateX(15px) scale(0.8);
+        opacity: 0.2;
+    }
+}
+
+/* Hearts passcode */
+.hearts-passcode {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0;
+}
+
+.passcode-bears.show-couple ~ .hearts-passcode {
+    opacity: 1;
+}
+
+.hearts-passcode .heart-fly {
+    animation: heartFly 4s linear infinite;
+}
+
+.hearts-passcode .heart-fly:nth-child(1) { left: 5%; animation-delay: 0s; animation-duration: 3s; font-size: 14px; }
+.hearts-passcode .heart-fly:nth-child(2) { left: 15%; animation-delay: 0.3s; animation-duration: 3.5s; font-size: 18px; }
+.hearts-passcode .heart-fly:nth-child(3) { left: 25%; animation-delay: 0.1s; animation-duration: 2.8s; font-size: 12px; }
+.hearts-passcode .heart-fly:nth-child(4) { left: 35%; animation-delay: 0.5s; animation-duration: 4s; font-size: 16px; }
+.hearts-passcode .heart-fly:nth-child(5) { left: 45%; animation-delay: 0.2s; animation-duration: 3.2s; font-size: 20px; }
+.hearts-passcode .heart-fly:nth-child(6) { left: 55%; animation-delay: 0.4s; animation-duration: 2.5s; font-size: 14px; }
+.hearts-passcode .heart-fly:nth-child(7) { left: 65%; animation-delay: 0.6s; animation-duration: 3.8s; font-size: 18px; }
+.hearts-passcode .heart-fly:nth-child(8) { left: 75%; animation-delay: 0.15s; animation-duration: 3s; font-size: 11px; }
+.hearts-passcode .heart-fly:nth-child(9) { left: 85%; animation-delay: 0.45s; animation-duration: 2.7s; font-size: 16px; }
+.hearts-passcode .heart-fly:nth-child(10) { left: 95%; animation-delay: 0.25s; animation-duration: 3.5s; font-size: 14px; }
+.hearts-passcode .heart-fly:nth-child(11) { left: 10%; animation-delay: 1s; animation-duration: 2.8s; font-size: 13px; }
+.hearts-passcode .heart-fly:nth-child(12) { left: 30%; animation-delay: 1.2s; animation-duration: 3.2s; font-size: 17px; }
+.hearts-passcode .heart-fly:nth-child(13) { left: 50%; animation-delay: 1.1s; animation-duration: 2.6s; font-size: 15px; }
+.hearts-passcode .heart-fly:nth-child(14) { left: 70%; animation-delay: 1.3s; animation-duration: 3.4s; font-size: 19px; }
+.hearts-passcode .heart-fly:nth-child(15) { left: 90%; animation-delay: 1.15s; animation-duration: 2.9s; font-size: 12px; }
+.hearts-passcode .heart-fly:nth-child(16) { left: 20%; animation-delay: 1.8s; animation-duration: 3.6s; font-size: 16px; }
+.hearts-passcode .heart-fly:nth-child(17) { left: 40%; animation-delay: 1.5s; animation-duration: 2.4s; font-size: 14px; }
+.hearts-passcode .heart-fly:nth-child(18) { left: 60%; animation-delay: 1.7s; animation-duration: 3.1s; font-size: 18px; }
+.hearts-passcode .heart-fly:nth-child(19) { left: 80%; animation-delay: 1.4s; animation-duration: 2.7s; font-size: 13px; }
+.hearts-passcode .heart-fly:nth-child(20) { left: 2%; animation-delay: 2s; animation-duration: 3.3s; font-size: 15px; }
+
+.lock-screen.hide {
+    opacity: 0;
+    transform: scale(1.1);
+    pointer-events: none;
+}
+
+.lock-screen-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.lock-screen-content {
+    position: relative;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 60px 20px 30px;
+}
+
+/* Time & Date */
+.lock-time-container {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.lock-time {
+    font-size: 72px;
+    font-weight: 300;
+    color: white;
+    letter-spacing: -2px;
+    text-shadow: 0 2px 20px rgba(0,0,0,0.3);
+}
+
+.lock-date {
+    font-size: 18px;
+    color: rgba(255,255,255,0.9);
+    font-weight: 500;
+    text-shadow: 0 1px 10px rgba(0,0,0,0.3);
+}
+
+/* Notifications */
+.lock-notifications {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-bottom: 16px;
+}
+
+.notification-card {
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+    border-radius: 20px;
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    transition: transform 0.2s, background 0.2s;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+.notification-card:hover {
+    background: rgba(255,255,255,0.25);
+    transform: translateZ(0) scale(1.02);
+}
+
+.notification-card:active {
+    transform: translateZ(0) scale(0.98);
+}
+
+.notification-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.notification-icon svg {
+    width: 39px;
+    height: 39px;
+    fill: #0084FF;
+}
+
+.notification-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.notification-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: white;
+    margin-bottom: 2px;
+}
+
+.notification-text {
+    font-size: 14px;
+    color: rgba(255,255,255,0.85);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.notification-time {
+    font-size: 12px;
+    color: rgba(255,255,255,0.6);
+    flex-shrink: 0;
+}
+
+/* Bottom controls */
+.lock-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 30px;
+    margin-top: 15px;
+}
+
+.lock-btn {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.lock-btn:hover {
+    background: rgba(255,255,255,0.3);
+}
+
+.lock-btn svg {
+    width: 24px;
+    height: 24px;
+    stroke: white;
+    stroke-width: 2;
+    fill: none;
+}
+
+.lock-btn-icon {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+}
+
+
+
+/* ========== PASSCODE SCREEN ========== */
+.passcode-screen {
+    position: absolute;
+    inset: 0;
+    transition: opacity 0.5s ease-out;
+    touch-action: manipulation;
+    -webkit-user-select: none;
+    user-select: none;
+    background: linear-gradient(
+        rgba(80, 30, 55, 0.7),
+        rgba(55, 20, 40, 0.75)
+    ),
+    url('../images/spheres/z7472441894159_3daa129226d07ef583ca82d29d3fc158.jpg') center/cover;
+    z-index: 45;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    padding: 25px 20px 20px;
+}
+
+.passcode-screen.visible {
+    display: flex;
+}
+
+.passcode-screen.hiding {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.phone-content {
+    opacity: 0;
+    transition: opacity 0.5s ease-out;
+}
+
+.phone-content.visible {
+    opacity: 1;
+}
+
+/* Bears */
+.passcode-bears {
+    position: relative;
+    width: 100%;
+    height: 220px;
+}
+
+.passcode-bear {
+    position: absolute;
+    top: 30%;
+    transform: translateY(-50%);
+    height: 250px;
+    width: auto;
+    object-fit: contain;
+    transition: left 0.4s ease, right 0.4s ease;
+}
+
+.passcode-bear.left {
+    left: 2%;
+}
+
+.passcode-bear.right {
+    right: 2%;
+    left: auto;
+}
+
+.passcode-title {
+    color: #fff;
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.passcode-subtitle {
+    color: rgba(255,255,255,0.6);
+    font-size: 13px;
+    margin-bottom: 16px;
+}
+
+.passcode-dots {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 30px;
+}
+
+.passcode-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.4);
+    transition: all 0.2s;
+}
+
+.passcode-dot.filled {
+    background: #fff;
+    border-color: #fff;
+}
+
+.passcode-dot.error {
+    border-color: #ff3b30;
+    background: #ff3b30;
+    animation: shake 0.4s;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+.passcode-keypad {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 25px;
+    max-width: 320px;
+    margin-top: auto;
+    padding-bottom: 20px;
+}
+
+.passcode-btn {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.22);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.3);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+    color: #fff;
+    font-size: 28px;
+    font-weight: 400;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.passcode-btn:active {
+    background: rgba(255,255,255,0.35);
+    transform: scale(0.95);
+}
+
+.passcode-btn.empty {
+    background: transparent;
+    border-color: transparent;
+    box-shadow: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    cursor: default;
+}
+
+.passcode-btn.empty:active {
+    transform: none;
+}
+
+.passcode-cancel {
+    margin-top: 24px;
+    color: rgba(255,255,255,0.6);
+    font-size: 16px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px 16px;
+}
+
+.passcode-cancel:hover {
+    color: #fff;
+}
+
+/* Couple image */
+.passcode-couple-img {
+    position: absolute;
+    left: 50%;
+    top: 30%;
+    transform: translate(-50%, -50%);
+    height: 270px;
+    width: auto;
+    object-fit: contain;
+    opacity: 0;
+    pointer-events: none;
+    transition: none;
+}
+
+.passcode-bears.show-couple .passcode-bear {
+    opacity: 0;
+}
+
+.passcode-bears.show-couple .passcode-couple-img {
+    opacity: 1;
+    transition: opacity 0.8s ease-out 0.2s;
+}
+
+.passcode-bears.show-couple ~ .passcode-title,
+.passcode-bears.show-couple ~ .passcode-subtitle,
+.passcode-bears.show-couple ~ .passcode-dots {
+    display: none !important;
+}
+
+.passcode-bears.show-couple {
+    height: 320px;
+    transition: height 1.2s ease-out;
+}
+
+.passcode-bears.show-couple .passcode-couple-img {
+    height: 300px;
+    transition: height 1.2s ease-out;
+}
+
+.passcode-screen.success .passcode-title,
+.passcode-screen.success .passcode-subtitle,
+.passcode-screen.success .passcode-dots,
+.passcode-screen.success .passcode-keypad,
+.passcode-screen.success .passcode-cancel {
+    display: none !important;
+}
+
+/* Bear positions */
+.passcode-bear.left.pos-0 { left: 2%; }
+.passcode-bear.right.pos-0 { right: 2%; }
+.passcode-bear.left.pos-1 { left: 6%; }
+.passcode-bear.right.pos-1 { right: 6%; }
+.passcode-bear.left.pos-2 { left: 12%; }
+.passcode-bear.right.pos-2 { right: 12%; }
+.passcode-bear.left.pos-3 { left: 20%; }
+.passcode-bear.right.pos-3 { right: 20%; }
+.passcode-bear.left.pos-4 { left: 34%; }
+.passcode-bear.right.pos-4 { right: 34%; }
+
+/* ========== RESPONSIVE: FULL SCREEN TRÊN MOBILE ========== */
+@media (max-width: 768px) {
+    body {
+        position: fixed;
+        inset: 0;
+        width: 100%;
+        padding: 0;
+        align-items: stretch;
+        justify-content: stretch;
+        /* Repeat fallback stack cho body trên mobile */
+        height: 100vh;
+        height: 100svh;
+        height: 100dvh;
+    }
+
+    .container {
+        max-width: none;
+        width: 100%;
+        /* Dùng cùng fallback stack cho container */
+        height: 100vh;
+        height: 100svh;
+        height: 100dvh;
+    }
+
+    .phone-container {
+        width: 100%;
+        height: 100%;
+    }
+
+    .phone-mockup {
+        width: 100%;
+        height: 100%;
+        max-width: none;
+        border-radius: 0;
+        box-shadow: none;
+        border: none;
+    }
+
+    .phone-screen {
+        inset: 0;
+        border-radius: 0;
+    }
+
+    .dynamic-island,
+    .side-btn-left,
+    .side-btn-right {
+        display: none;
+    }
+
+    /* Safe area cho notch iPhone (PWA / Add to Home Screen) */
+    .lock-screen-content {
+        padding-top: max(60px, env(safe-area-inset-top, 0px) + 20px);
+    }
+    .chat-header {
+        padding-top: max(32px, env(safe-area-inset-top, 0px) + 8px);
+    }
+    .lock-notifications {
+        padding-bottom: max(16px, env(safe-area-inset-bottom, 0px) + 8px);
+    }
+    .passcode-keypad {
+        padding-bottom: max(20px, env(safe-area-inset-bottom, 0px) + 12px);
+    }
+    .chat-input-container {
+        padding-bottom: max(16px, env(safe-area-inset-bottom, 0px) + 12px);
+    }
+
+    .phone-content {
+        touch-action: pan-y;
+    }
+    .message-list {
+        touch-action: pan-y;
+    }
+}
+
+/* ========== PWA: Add to Home Screen — không có thanh Safari, full màn hình ========== */
+@media (max-width: 768px) and (display-mode: standalone),
+       (max-width: 768px) and (display-mode: fullscreen) {
+    html {
+        height: 100vh !important;
+        min-height: 100vh !important;
+        background: #0a0a0a;
+    }
+    body {
+        height: 100vh !important;
+        min-height: 100vh !important;
+        position: fixed !important;
+        inset: 0 !important;
+        background: linear-gradient(to bottom right, #171717, #171717, #0a0a0a);
+    }
+    .container {
+        height: 100% !important;
+        min-height: 100% !important;
+    }
+}
+/* ========== Scene 3D (backup2) - hiện khi ấn giữ fingerprint ========== */
+.scene3d-root {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: none;
+    background: #000;
+    overflow: hidden;
+}
+.scene3d-root.visible {
+    display: block;
+}
+
+/* Màn vào trực tiếp (enableLockAndChat = false) */
+.direct-entry-container {
+    position: fixed !important;
+    inset: 0 !important;
+    background: linear-gradient(135deg, #1a0a14 0%, #0d0510 50%, #0a0a0f 100%);
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    padding-bottom: 0px !important;
+    transition: opacity 2.5s ease-out;
+}
+.direct-entry-inner {
+    text-align: center;
+}
+.direct-entry-hint {
+    color: rgba(255, 182, 193, 0.9);
+    font-size: 1rem;
+    margin-bottom: 24px;
+}
+.direct-entry-container .fingerprint-wrap {
+    margin: 0 auto;
+    position: relative;
+    opacity: 1;
+}
+.direct-entry-container .fingerprint-wrap .fingerprint-img {
+    animation: fingerprint-shake 0.5s ease-in-out infinite;
+    animation-delay: 1s;
+}
+
+#chatContainer {
+    position: relative;
+    z-index: 1000;
+    transition: opacity 2.5s ease-out;
+}
+
+/* iOS navigator.standalone — JS thêm class .pwa-standalone */
+@media (max-width: 768px) {
+    html.pwa-standalone {
+        height: 100vh !important;
+        min-height: 100vh !important;
+        background: #0a0a0a !important;
+    }
+    html.pwa-standalone body {
+        height: 100vh !important;
+        min-height: 100vh !important;
+        position: fixed !important;
+        inset: 0 !important;
+        background: linear-gradient(to bottom right, #171717, #171717, #0a0a0a) !important;
+    }
+    html.pwa-standalone .container {
+        height: 100% !important;
+        min-height: 100% !important;
+    }
+}

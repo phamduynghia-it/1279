@@ -1,0 +1,558 @@
+/* Scene 3D styles (scoped when inside scene3d-root) */
+
+@font-face {
+    font-family: "PacificoLocal";
+    src: url("../fonts/Pacifico-Regular.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+#scene3d-root * {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+#scene3d-root canvas {
+    display: block;
+}
+#threejs-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 1;
+    transition: opacity 1s ease-in-out;
+    z-index: 0;
+}
+#threejs-canvas.fade-out {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Gợi ý "Click vào nhé" — dưới cùng căn giữa, nổi trên toàn bộ scene 3D */
+#sphere-click-hint.sphere-click-hint {
+    position: fixed;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+    padding: 12px 24px;
+    background: rgba(0, 0, 0, 0.65);
+    color: #fff;
+    font-size: 1rem;
+    border-radius: 24px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.35s ease;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+#sphere-click-hint.sphere-click-hint.visible {
+    opacity: 1;
+}
+
+/* Nhóm trái tim + ảnh + tên (mode days) */
+.heart-days-group {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+.heart-days-message-slot {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+.heart-days-images {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+/* Hai ảnh hai bên trái tim + tên - chỉ mode 'days' */
+.heart-side-wrap {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    z-index: 11;
+    opacity: 0;
+    transition: opacity 0.8s ease-out;
+    pointer-events: none;
+}
+.heart-side-wrap.visible {
+    display: flex;
+    opacity: 1;
+}
+.heart-side-left {
+    left: 4%;
+}
+.heart-side-right {
+    right: 4%;
+}
+.heart-side-name {
+    margin-top: 52px;
+    /* clamp(min, ưu tiên, max): font to hơn, cách ảnh xa hơn */
+    font-size: clamp(30px, 4vw, 44px);
+    font-weight: 600;
+    font-family: "PacificoLocal", "Cormorant Garamond", Georgia, serif;
+    color: #ffb6c1;
+    text-shadow: 0 0 12px rgba(255, 105, 180, 0.8), 0 0 24px rgba(255, 182, 193, 0.5);
+    white-space: nowrap;
+}
+.heart-side-img {
+    width: clamp(140px, 28vw, 260px);
+    height: clamp(140px, 28vw, 260px);
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 3px solid rgba(255, 105, 180, 0.9);
+    display: block;
+    box-shadow: 
+        0 0 15px rgba(255, 105, 180, 0.6),
+        0 0 30px rgba(255, 182, 193, 0.5),
+        0 0 50px rgba(255, 20, 147, 0.35),
+        inset 0 0 20px rgba(255, 182, 193, 0.15);
+}
+
+#message {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #ff8fa3;
+    font-size: 2em;
+    font-family: "PacificoLocal", "Cormorant Garamond", Georgia, serif;
+    line-height: 1.25;
+    text-align: center;
+    opacity: 0;
+    transition: opacity 1.5s ease-out;
+    pointer-events: none;
+    text-shadow: 0 0 20px rgba(255, 77, 109, 1), 
+                 0 0 40px rgba(255, 77, 109, 0.8),
+                 0 0 60px rgba(255, 77, 109, 0.6);
+    z-index: 10;
+    transform-origin: center center;
+    transform-style: preserve-3d;
+}
+/* Chữ text-only (không có ngày): to như valentineMessageLine1 */
+#message .heart-line1 {
+    display: block;
+    font-size: 1em;
+    letter-spacing: 0.05em;
+    opacity: 0.95;
+}
+/* Chữ "Đang Yêu" nhỏ hơn, "X ngày" to hơn (mode days có ngày) */
+#message .heart-days-label {
+    display: block;
+    font-size: 0.65em;
+    letter-spacing: 0.15em;
+    opacity: 0.95;
+    margin-bottom: 0.02em;
+    line-height: 1.2;
+}
+#message .heart-days-number {
+    display: block;
+    font-size: 1.15em;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    line-height: 1.2;
+}
+/* Nút khi ảnh bay (phase quả cầu) */
+#btn-flying-corner {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 100;
+    display: none;
+    padding: 8px 14px;
+    font-size: 12px;
+    border: none;
+    border-radius: 20px;
+    background: rgba(255, 105, 180, 0.9);
+    color: #fff;
+    cursor: pointer;
+    box-shadow: 0 2px 10px rgba(255, 105, 180, 0.4);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+#btn-flying-corner.visible { display: block; }
+#btn-flying-corner:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 14px rgba(255, 105, 180, 0.5);
+}
+/* Typing effect overlay (thư Valentine) */
+#typing-container {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 150;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 1s ease-in;
+}
+#typing-container.visible {
+    display: flex;
+    opacity: 1;
+}
+#typing-text {
+    max-width: 80%; max-height: 70%;
+    padding: 30px;
+    font-family: "PacificoLocal", "Cormorant Garamond", Georgia, serif !important;
+    font-size: 1.5em;
+    font-style: normal;
+    color: #ffc0cb;
+    text-align: center;
+    line-height: 1.6;
+    letter-spacing: 0.03em;
+    text-shadow: 0 0 14px rgba(255, 105, 180, 0.55), 0 0 26px rgba(255, 182, 193, 0.25);
+    white-space: pre-wrap;
+}
+#typing-text .cursor {
+    display: inline-block;
+    width: 2px; height: 1.2em;
+    background: #ffc0cb;
+    margin-left: 2px;
+    animation: blink 0.8s infinite;
+    vertical-align: text-bottom;
+}
+@keyframes blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0; }
+}
+/* Particles nền (phase quả cầu) — giống universe/imageheart.html */
+.particles {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+}
+.particle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: rgba(255, 105, 180, 0.6);
+    border-radius: 50%;
+    animation: float 15s infinite ease-in-out;
+}
+@keyframes float {
+    0%, 100% {
+        transform: translateY(100vh) rotate(0deg);
+        opacity: 0;
+    }
+    10% { opacity: 1; }
+    80% { opacity: 1; }
+    90%, 100% {
+        transform: translateY(-100vh) rotate(720deg);
+        opacity: 0;
+    }
+}
+
+/* ========== KIỂU THƯ CUPID (Letter Type: Cupid) ========== */
+#cupid-letter-overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 200;
+    pointer-events: none;
+}
+#cupid-letter-overlay.visible {
+    display: flex;
+    pointer-events: auto;
+}
+#cupid-letter-overlay .cupid-space {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    overflow: hidden;
+}
+#cupid-flying-img {
+    position: absolute;
+    width: clamp(120px, 25vw, 220px);
+    height: auto;
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    z-index: 210;
+}
+#letter-envelope-img {
+    position: fixed;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: clamp(140px, 30vw, 260px);
+    height: auto;
+    cursor: pointer;
+    display: none;
+    z-index: 215;
+    transition: transform 0.2s ease;
+}
+#letter-envelope-img.visible {
+    display: block;
+    animation: cupidLetterFadeIn 0.5s ease-out;
+}
+#letter-envelope-img:hover { transform: translate(-50%, -50%) scale(1.06); }
+#cupid-letter-frame {
+    position: fixed;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: min(92vw, 720px);
+    max-width: 92vw;
+    max-height: 76vh;
+    overflow: visible;
+    display: none;
+    flex-direction: column;
+    z-index: 220;
+    border-radius: clamp(12px, 2.5vw, 20px);
+    box-shadow: 0 20px 60px rgba(255, 105, 180, 0.35), 0 0 0 1px rgba(255, 182, 193, 0.3);
+    background: linear-gradient(135deg, #ffd1dc 0%, #ffe4e9 25%, #fff0f5 50%, #ffe4ec 75%, #ffc0cb 100%);
+    pointer-events: auto;
+}
+#cupid-letter-frame.visible {
+    display: flex;
+    animation: cupidLetterFadeIn 0.6s ease-out;
+}
+@keyframes cupidLetterFadeIn {
+    from { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
+    to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+#cupid-letter-frame .letter-content {
+    padding: clamp(20px, 4vw, 32px) clamp(20px, 4vw, 36px) clamp(60px, 9vw, 90px);
+    overflow-y: auto;
+    max-height: 72vh;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    font-family: "PacificoLocal", "Cormorant Garamond", Georgia, serif !important;
+    font-size: clamp(0.95rem, 2vw, 1.2em);
+    font-style: normal;
+    color: #8b3a62;
+    line-height: 1.75;
+    letter-spacing: 0.02em;
+    text-align: center;
+    white-space: pre-wrap;
+}
+#cupid-letter-frame .letter-content::-webkit-scrollbar {
+    display: none;
+}
+#cupid-letter-frame .letter-content .letter-cursor {
+    display: inline-block;
+    width: 2px;
+    height: 1.2em;
+    background: #8b3a62;
+    margin-left: 2px;
+    animation: blink 0.8s infinite;
+    vertical-align: text-bottom;
+}
+#cupid-letter-frame .cupid-frame-left {
+    position: absolute;
+    left: 0;
+    top: 35%;
+    transform: translate(-50%, -50%);
+    width: clamp(70px, 18vw, 120px);
+    height: auto;
+    z-index: 1;
+    pointer-events: none;
+}
+#cupid-letter-frame .cupid-frame-right {
+    position: absolute;
+    right: 0;
+    top: 68%;
+    transform: translate(50%, -50%);
+    width: clamp(85px, 22vw, 150px);
+    height: auto;
+    z-index: 1;
+    pointer-events: none;
+}
+/* TYPING: thư trong không gian (không nền), cupid nổi ở góc */
+#letter-typing-space {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 205;
+    pointer-events: none;
+}
+#letter-typing-space.visible {
+    display: flex;
+}
+#letter-typing-space .letter-typing-text {
+    max-width: 80%; max-height: 70%;
+    padding: 30px 30px 60px;
+    pointer-events: none;
+    font-family: "PacificoLocal", "Cormorant Garamond", Georgia, serif !important;
+    font-size: 1.5em;
+    font-style: normal;
+    color: #ffb6c1;
+    text-align: center;
+    line-height: 1.6;
+    letter-spacing: 0.03em;
+    text-shadow: 
+        0 0 8px rgba(255, 182, 193, 0.9),
+        0 0 18px rgba(255, 105, 180, 0.7),
+        0 0 30px rgba(255, 105, 180, 0.55),
+        0 0 48px rgba(255, 182, 193, 0.45);
+    white-space: pre-wrap;
+    overflow-y: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+#cupid-letter-frame .letter-content,
+#letter-typing-space .letter-typing-text {
+    position: relative;
+}
+
+.letter-signature {
+    position: absolute;
+    right: clamp(16px, 4vw, 32px);
+    bottom: clamp(12px, 3vw, 24px);
+    font-family: "PacificoLocal", "Cormorant Garamond", Georgia, serif;
+    font-size: 0.9em;
+    opacity: 0.9;
+}
+#letter-typing-space .letter-typing-text::-webkit-scrollbar { display: none; }
+#letter-typing-space .letter-typing-text.typing-complete {
+    pointer-events: auto;
+    -webkit-overflow-scrolling: touch;
+    cursor: default;
+}
+#cupid-letter-frame .letter-content.typing-complete {
+    -webkit-overflow-scrolling: touch;
+}
+#letter-typing-space .letter-cursor {
+    display: inline-block;
+    width: 2px; height: 1.2em;
+    background: #ffb6c1;
+    margin-left: 2px;
+    box-shadow: 0 0 8px rgba(255, 105, 180, 0.9), 0 0 16px rgba(255, 182, 193, 0.6);
+    animation: blink 0.8s infinite;
+    vertical-align: text-bottom;
+}
+.cupid-in-space {
+    position: absolute;
+    width: clamp(120px, 26vw, 200px);
+    height: auto;
+    z-index: 204;
+    pointer-events: none;
+    display: none;
+}
+.cupid-in-space.visible { display: block; }
+#cupid-in-space-boy {
+    top: 5%;
+    left: 5%;
+    transform: translate(-30%, 0);
+}
+#cupid-in-space-girl {
+    bottom: 5%;
+    right: 5%;
+    transform: translate(30%, 0);
+}
+/* ========== RESPONSIVE MOBILE (Letter Type Cupid + heart-side) ========== */
+@media (max-width: 768px) {
+    /* Mode days trên mobile: chữ trong tim (đẩy lên chút), ảnh + tên ở dưới trái tim */
+    .scene3d-root.heart-mode-days #message {
+        top: 62%;
+    }
+    .scene3d-root.heart-mode-days .heart-side-wrap {
+        top: auto;
+        bottom: 10%;
+        transform: translateY(0);
+    }
+    .scene3d-root.heart-mode-days .heart-side-left {
+        left: 8%;
+    }
+    .scene3d-root.heart-mode-days .heart-side-right {
+        right: 8%;
+    }
+
+    .heart-side-img {
+        width: clamp(100px, 30vw, 180px);
+        height: clamp(100px, 30vw, 180px);
+    }
+    .heart-side-name { font-size: clamp(16px, 3.2vw, 22px); margin-top: 16px; }
+    .heart-side-left { left: 2%; }
+    .heart-side-right { right: 2%; }
+    #cupid-flying-img {
+        width: clamp(100px, 35vw, 180px);
+    }
+    #letter-envelope-img {
+        width: clamp(120px, 45vw, 220px);
+    }
+    #cupid-letter-frame {
+        width: min(92vw, 100%);
+        max-width: 92vw;
+        max-height: 78vh;
+        border-radius: 12px;
+    }
+    #cupid-letter-frame .letter-content {
+        padding: 16px 14px 44px; /* thêm khoảng trống cho chữ ký */
+        max-height: 72vh;
+        font-size: 0.95rem;
+        line-height: 1.75;
+        -webkit-overflow-scrolling: touch;
+    }
+    #letter-typing-space .letter-typing-text {
+        padding-bottom: 80px; /* để chữ ký không dính nội dung */
+    }
+    #cupid-letter-frame .cupid-frame-left {
+        top: 32%;
+        width: clamp(50px, 20vw, 85px);
+    }
+    #cupid-letter-frame .cupid-frame-right {
+        top: 72%;
+        width: clamp(55px, 24vw, 100px);
+    }
+    #cupid-in-space-boy, #cupid-in-space-girl {
+        width: clamp(70px, 22vw, 95px);
+    }
+}
+@media (max-width: 480px) {
+    .scene3d-root.heart-mode-days #message { top: 46%; }
+    .scene3d-root.heart-mode-days .heart-side-wrap { bottom: 8%; }
+    .scene3d-root.heart-mode-days .heart-side-left { left: 5%; }
+    .scene3d-root.heart-mode-days .heart-side-right { right: 5%; }
+
+    .heart-side-img {
+        width: clamp(90px, 35vw, 140px);
+        height: clamp(90px, 35vw, 140px);
+    }
+    #cupid-flying-img {
+        width: clamp(90px, 40vw, 150px);
+    }
+    #letter-envelope-img {
+        width: clamp(110px, 55vw, 200px);
+    }
+    #cupid-letter-frame {
+        width: 96vw;
+        max-height: 80vh;
+    }
+    #cupid-letter-frame .letter-content {
+        padding: 14px 12px 40px; /* thêm khoảng trống dưới cho màn rất nhỏ */
+        max-height: 68vh;
+        font-size: 0.9rem;
+    }
+    #cupid-letter-frame .cupid-frame-left {
+        top: 30%;
+        width: clamp(40px, 22vw, 70px);
+    }
+    #cupid-letter-frame .cupid-frame-right {
+        top: 74%;
+        width: clamp(45px, 26vw, 85px);
+    }
+    #cupid-in-space-boy, #cupid-in-space-girl {
+        width: clamp(45px, 24vw, 80px);
+    }
+}
+@media (hover: none) and (pointer: coarse) {
+    #letter-envelope-img:hover { transform: translate(-50%, -50%) scale(1); }
+    #letter-envelope-img:active { transform: translate(-50%, -50%) scale(1.05); }
+}
